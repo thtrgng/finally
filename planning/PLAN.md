@@ -175,7 +175,7 @@ Both the simulator and the Massive client implement the same abstract interface.
 
 - Endpoint: `GET /api/stream/prices`
 - Long-lived SSE connection; client uses native `EventSource` API
-- Server pushes price updates for all tickers known to the system at a regular cadence (~500ms) — in the single-user model this is equivalent to the user's watchlist
+- Server pushes price updates for all tickers currently in the watchlist at a regular cadence (~500ms). The stream reflects the live watchlist state — tickers added or removed mid-session are included or excluded automatically on the next push cycle
 - Each SSE event contains ticker, price, previous price, timestamp, and change direction
 - Client handles reconnection automatically (EventSource has built-in retry)
 
@@ -239,6 +239,15 @@ All tables include a `user_id` column defaulting to `"default"`. This is hardcod
 - `actions` TEXT (JSON — trades executed, watchlist changes made; null for user messages)
 - `created_at` TEXT (ISO timestamp)
 
+### Indexes
+
+Create the following indexes at schema initialization time for query performance:
+- `watchlist(user_id)`
+- `positions(user_id)`
+- `trades(user_id, executed_at)`
+- `portfolio_snapshots(user_id, recorded_at)`
+- `chat_messages(user_id, created_at)`
+
 ### Default Seed Data
 
 - One user profile: `id="default"`, `cash_balance=10000.0`
@@ -270,6 +279,7 @@ All tables include a `user_id` column defaulting to `"default"`. This is hardcod
 ### Chat
 | Method | Path | Description |
 |--------|------|-------------|
+| GET | `/api/chat` | Retrieve recent conversation history (last N messages, ordered oldest-first) |
 | POST | `/api/chat` | Send a message, receive complete JSON response (message + executed actions) |
 
 ### System
@@ -281,7 +291,7 @@ All tables include a `user_id` column defaulting to `"default"`. This is hardcod
 
 ## 9. LLM Integration
 
-When writing code to make calls to LLMs, use cerebras-inference skill to use LiteLLM via OpenRouter to the `openrouter/openai/gpt-oss-120b` model with Cerebras as the inference provider. Structured Outputs should be used to interpret the results.
+When writing code to make calls to LLMs, use the cerebras skill to use LiteLLM via OpenRouter with Cerebras as the inference provider. Invoke the cerebras skill to get the exact model identifier and call pattern — do not hardcode a model string. Structured Outputs should be used to interpret the results.
 
 There is an OPENROUTER_API_KEY in the .env file in the project root.
 
@@ -364,9 +374,9 @@ The frontend is a single-page application with a dense, terminal-inspired layout
 ### Technical Notes
 
 - Use `EventSource` for SSE connection to `/api/stream/prices`
-- Canvas-based charting library preferred (Lightweight Charts or Recharts) for performance
+- Canvas-based charting library preferred for performance: Lightweight Charts (canvas-based, recommended) or Recharts (SVG-based, simpler API)
 - Price flash effect: on receiving a new price, briefly apply a CSS class with background color transition, then remove it
-- All API calls go to the same origin (`/api/*`) — no CORS configuration needed
+- All API calls go to the same origin (`/api/*`) — no CORS configuration needed in production. During local development with the Next.js dev server (port 3000), configure a proxy in `next.config.ts` to forward `/api/*` to `http://localhost:8000` to avoid CORS issues
 - Tailwind CSS for styling with a custom dark theme
 
 ---
@@ -376,11 +386,11 @@ The frontend is a single-page application with a dense, terminal-inspired layout
 ### Multi-Stage Dockerfile
 
 ```
-Stage 1: Node 20 slim
+Stage 1: Node 22 slim
   - Copy frontend/
   - npm install && npm run build (produces static export)
 
-Stage 2: Python 3.12 slim
+Stage 2: Python 3.13 slim
   - Install uv
   - Copy backend/
   - uv sync (install Python dependencies from lockfile)

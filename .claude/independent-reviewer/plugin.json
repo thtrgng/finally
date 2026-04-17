@@ -1,0 +1,21 @@
+{
+  "name": "independent-reviewer",
+  "displayName": "Independent Code Reviewer",
+  "version": "1.0.0",
+  "description": "Automatically reviews every code change Claude makes using an independent sub-agent. Catches bugs, security holes, and style violations before they land.",
+  "author": "your-company",
+  "license": "MIT",
+  "claudeCodeMinVersion": "1.0.0",
+  "homepage": "~/.claude/marketplace/plugins/independent-reviewer",
+  "hooks": {
+    "PostToolUse": {
+      "matcher": "Write|Edit|MultiEdit",
+      "command": ".claude/independent-reviewer/hooks/post-edit-review.sh"
+    }
+  },
+  "installs": {
+    "agents": ["agents/independent-reviewer.md"],
+    "commands": ["commands/review.md"],
+    "hooks": ["hooks/post-edit-review.sh"]
+  }
+}

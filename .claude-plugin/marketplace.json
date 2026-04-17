@@ -1,0 +1,19 @@
+{
+  "name": "trung-tools",
+  "owner": {
+    "name": "Trung",
+    "email": "playzs8170@gmail.com"
+  },
+  "plugins": [
+    {
+      "name": "independent-reviewer",
+      "source": "./.claude/independent-reviewer",
+      "description": "Carry out an independent review of all changes since last commit",
+      "version": "1.0.0",
+      "author": {
+        "name": "Trung"
+      }
+    }
+  ]
+}
+

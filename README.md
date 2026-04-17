@@ -1,6 +1,6 @@
 # FinAlly — AI Trading Workstation
 
-A visually stunning AI-powered trading workstation that streams live market data, simulates portfolio trading, and integrates an LLM chat assistant that can analyze positions and execute trades via natural language.
+A visually stunning AI-powered trading workstation that streams live market data, lets users trade a simulated portfolio, and integrates an LLM chat assistant that can analyze positions and execute trades via natural language.
 
 Built entirely by coding agents as a capstone project for an agentic AI coding course.
 
@@ -19,22 +19,22 @@ Single Docker container serving everything on port 8000:
 
 - **Frontend**: Next.js (static export) with TypeScript and Tailwind CSS
 - **Backend**: FastAPI (Python/uv) with SSE streaming
-- **Database**: SQLite with lazy initialization
+- **Database**: SQLite with lazy initialization and default seed data
 - **AI**: LiteLLM → OpenRouter (Cerebras inference) with structured outputs
-- **Market data**: Built-in GBM simulator (default) or Massive API (optional)
+- **Market data**: Built-in GBM simulator (default) or Massive/Polygon.io API (optional)
 
 ## Quick Start
 
 ```bash
-# Clone and configure
+# 1. Copy and configure environment
 cp .env.example .env
-# Add your OPENROUTER_API_KEY to .env
+# Edit .env and add your OPENROUTER_API_KEY
 
-# Run with Docker
+# 2. Build and run
 docker build -t finally .
 docker run -v finally-data:/app/db -p 8000:8000 --env-file .env finally
 
-# Open http://localhost:8000
+# 3. Open http://localhost:8000
 ```
 
 ## Environment Variables
@@ -42,19 +42,21 @@ docker run -v finally-data:/app/db -p 8000:8000 --env-file .env finally
 | Variable | Required | Description |
 |---|---|---|
 | `OPENROUTER_API_KEY` | Yes | OpenRouter API key for AI chat |
-| `MASSIVE_API_KEY` | No | Massive (Polygon.io) key for real market data; omit to use simulator |
-| `LLM_MOCK` | No | Set `true` for deterministic mock LLM responses (testing) |
+| `MASSIVE_API_KEY` | No | Polygon.io key for real market data; omit to use the built-in simulator |
+| `LLM_MOCK` | No | Set `true` for deterministic mock responses (testing/CI) |
 
 ## Project Structure
 
 ```
 finally/
-├── frontend/    # Next.js static export
-├── backend/     # FastAPI uv project
-├── planning/    # Project documentation and agent contracts
-├── test/        # Playwright E2E tests
-├── db/          # SQLite volume mount (runtime)
-└── scripts/     # Start/stop helpers
+├── frontend/        # Next.js static export (TypeScript + Tailwind)
+├── backend/         # FastAPI uv project (Python)
+│   ├── app/         # Routes, services, models
+│   └── tests/       # Pytest unit tests
+├── planning/        # Project documentation and agent contracts
+├── test/            # Playwright E2E tests
+├── db/              # SQLite volume mount (runtime, gitignored)
+└── scripts/         # start_mac.sh / stop_mac.sh (and Windows equivalents)
 ```
 
 ## License
