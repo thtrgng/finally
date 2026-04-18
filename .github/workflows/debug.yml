@@ -1,0 +1,19 @@
+name: Debug Trigger
+
+on:
+  push:
+    branches: [main]
+  issues:
+    types: [opened]
+  issue_comment:
+    types: [created]
+  workflow_dispatch:
+
+jobs:
+  debug:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Debug Output
+        run: |
+          echo "Event: ${{ github.event_name }}"
+          echo "Triggered!"
