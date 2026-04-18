@@ -1,0 +1,42 @@
+# Python virtual environments and caches
+**/.venv/
+**/node_modules/
+**/__pycache__/
+**/*.pyc
+**/.pytest_cache/
+**/.ruff_cache/
+**/.mypy_cache/
+**/.coverage
+**/htmlcov/
+**/dist/
+**/build/
+**/*.egg-info/
+
+# Lock files (dependency resolution artifacts, not source)
+backend/uv.lock
+frontend/package-lock.json
+frontend/yarn.lock
+frontend/pnpm-lock.yaml
+
+# Next.js build output
+frontend/.next/
+frontend/out/
+
+# Runtime database (not source code)
+db/finally.db
+
+# Git internals
+.git/
+
+# Planning archive (superseded docs)
+planning/archive/
+
+# Claude internal state
+.claude/.independent-reviewer/
+.claude/independent-reviewer/
+.claude/agent-memory/
+
+# IDE and OS artifacts
+.DS_Store
+**/.DS_Store
+Thumbs.db
