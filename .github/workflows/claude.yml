@@ -32,7 +32,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 1
+          fetch-depth: 0
 
       - name: Run Claude Code
         id: claude
@@ -42,6 +42,9 @@ jobs:
 
           # This is an optional setting that allows Claude to read CI results on PRs
           additional_permissions: |
+            contents: write
+            pull-requests: write
+            issues: write
             actions: read
 
           # Optional: Give a custom prompt to Claude. If this is not specified, Claude will perform the instructions specified in the comment that tagged it.
